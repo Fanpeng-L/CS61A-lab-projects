@@ -12,7 +12,7 @@ FIRST_101_DIGITS_OF_PI = 3141592653589793238462643383279502884197169399375105820
 
 
 def roll_dice(num_rolls, dice=six_sided):
-    """Simulate rolling the DICE exactly NUM_ROLLS > 0 times. Return the sum of
+    """Simulate rolling the DICE NUM_ROLLS > 0 times. Return the sum of
     the outcomes unless any of the outcomes is 1. In that case, return 1.
 
     num_rolls:  The number of dice rolls that will be made.
@@ -22,21 +22,44 @@ def roll_dice(num_rolls, dice=six_sided):
     assert type(num_rolls) == int, 'num_rolls must be an integer.'
     assert num_rolls > 0, 'Must roll at least once.'
     # BEGIN PROBLEM 1
-    "*** YOUR CODE HERE ***"
-    # END PROBLEM 1
+    total = 0
+    have_num_one = False
+    while num_rolls > 0:
+        current_dice = dice()
+        total += current_dice
+        if current_dice == 1:
+            have_num_one = True
+        else:
+            total += current_dice
+        num_rolls -= 1
+    if have_num_one == 1:
+        return 1
+    else:
+        return total
 
 
 def free_bacon(score):
     """Return the points scored from rolling 0 dice (Free Bacon).
+    A player who chooses to roll zero dice scores k+3 points,
+    where k is the nth digit of pi after the decimal point, and n is the total
+    score of their opponent. As a special case, if the opponent's score is n = 0,
+    then k = 3 (the digit of pi before the decimal point).
 
+    Example 1: The opponent has a score of 0, and the current player rolls zero dice.
+    The current player will receive 3 + 3 = 6 points.
+    Example 2: The opponent has a score of 1, and the current player rolls zero dice.
+    The current player will receive 1 + 3 = 4 points.
+    Example 3: The opponent has a score of 2, and the current player rolls zero dice.
+    The current player will receive 4 + 3 = 7 points.
+    Example 4: The opponent has a score of 42, and the current player rolls zero dice.
+    The current player will receive 9 + 3 = 12 points.
     score:  The opponent's current score.
     """
     assert score < 100, 'The game should be over.'
     pi = FIRST_101_DIGITS_OF_PI
-
     # Trim pi to only (score + 1) digit(s)
     # BEGIN PROBLEM 2
-    "*** YOUR CODE HERE ***"
+    pi = pi // pow(10, 100 - score)
     # END PROBLEM 2
 
     return pi % 10 + 3
@@ -56,7 +79,9 @@ def take_turn(num_rolls, opponent_score, dice=six_sided):
     assert num_rolls <= 10, 'Cannot roll more than 10 dice.'
     assert opponent_score < 100, 'The game should be over.'
     # BEGIN PROBLEM 3
-    "*** YOUR CODE HERE ***"
+    if num_rolls == 0:
+        return free_bacon(opponent_score)
+    return roll_dice(num_rolls, dice)
     # END PROBLEM 3
 
 
@@ -78,7 +103,13 @@ def swine_align(player_score, opponent_score):
     False
     """
     # BEGIN PROBLEM 4a
-    "*** YOUR CODE HERE ***"
+    def gcd(player_score, opponent_score):
+        if opponent_score == 0:
+            return player_score
+        return gcd(opponent_score, player_score % opponent_score)
+    if gcd(player_score, opponent_score) >= 10:
+        return True
+    return False
     # END PROBLEM 4a
 
 
@@ -100,7 +131,9 @@ def pig_pass(player_score, opponent_score):
     False
     """
     # BEGIN PROBLEM 4b
-    "*** YOUR CODE HERE ***"
+    if player_score < opponent_score and opponent_score - player_score < 3:
+        return True
+    return False
     # END PROBLEM 4b
 
 
@@ -139,7 +172,7 @@ def play(strategy0, strategy1, score0=0, score1=0, dice=six_sided,
     """
     who = 0  # Who is about to take a turn, 0 (first) or 1 (second)
     # BEGIN PROBLEM 5
-    "*** YOUR CODE HERE ***"
+    
     # END PROBLEM 5
     # (note that the indentation for the problem 6 prompt (***YOUR CODE HERE***) might be misleading)
     # BEGIN PROBLEM 6
